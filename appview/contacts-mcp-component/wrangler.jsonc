@@ -1,6 +1,12 @@
+// Frontend migrated to cljs/ (reagent + re-frame + jp-go-dds, ADR-2608260900).
+// `main` now points at the pre-existing edge facade (src/app.ts), which
+// already falls through to `env.ASSETS.fetch(req)` for anything it doesn't
+// handle itself (health/oauth/xrpc routes), so serving the cljs static
+// bundle through it needs no new proxy code. UNVERIFIED: no
+// `wrangler deploy`/`wrangler dev` was run against this config.
 {
   "name": "kotodama-contacts-mcp",
-  "main": "svelte/.svelte-kit/cloudflare/_worker.js",
+  "main": "src/app.ts",
   "compatibility_date": "2025-03-17",
   "compatibility_flags": [
     "nodejs_compat",
@@ -11,7 +17,7 @@
     "APP_DESCRIPTION": "Thin edge facade; Google Contacts OAuth and sync run in BPMN + Zeebe Python",
     "APP_DISPLAY_NAME": "Google Contacts",
     "APP_EMBED_URL": "https://contacts-mcp.etzhayyim.com/?embed=1",
-    "APP_FRAMEWORK": "sveltekit-edge-bff",
+    "APP_FRAMEWORK": "cljs-reagent-re-frame-jp-go-dds",
     "APP_NANOID": "contacts-mcp",
     "APP_PERFORMER_TYPE": "service",
     "APP_UI_TYPE": "appview",
@@ -28,7 +34,7 @@
     }
   ],
   "assets": {
-    "directory": "./svelte/.svelte-kit/cloudflare/client",
+    "directory": "./cljs/public",
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
