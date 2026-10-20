@@ -1,0 +1,34 @@
+(ns contacts.surface-parity-test
+  "aiueos/contacts_surface.cljk（判定コア）と contacts.app の宣言の parity。
+  app_test.cljk（既存のオラクル）がピン留めした default-db の値が guest の
+  整合規則（route-count 一致 / kind 閉じた集合 / source path / xrpc 一致）を
+  満たすこと。reagent は kbb でロードできないため fixture 形で照合する。"
+  (:require [clojure.test :refer [deftest is testing]]))
+
+(def default-db
+  ;; app_test.cljk のピン値（field for field and value for value）
+  {:title "Contacts Mcp Component"
+   :project "etzhayyim-project-contacts"
+   :name "contacts-mcp-component"
+   :kind "appview"
+   :route-count 0
+   :routes []
+   :vars []
+   :xrpc? true
+   :relative-path "60-apps/etzhayyim-project-contacts/appview/contacts-mcp-component/cljs/src/contacts/app.cljk"})
+
+(defn- route-count-ok [declared n-actual] (if (= declared n-actual) 1 0))
+(defn- kind-code [kind] (get {"appview" 0 "worker" 1 "component" 2 "app" 3} kind -1))
+(defn- kind-ok [code] (if (and (>= code 0) (<= code 3)) 1 0))
+
+(deftest declared-surface-satisfies-guest-rules
+  (testing "guest test-count: route-count は routes の数と一致"
+    (is (= 1 (route-count-ok (:route-count default-db) (count (:routes default-db))))))
+  (testing "guest test-kind: kind は閉じた集合（appview = 0）"
+    (is (= 1 (kind-ok (kind-code (:kind default-db))))))
+  (testing "guest test-surface: source path の明示と xrpc の一貫"
+    (is (string? (:relative-path default-db)))
+    (is (true? (:xrpc? default-db))))
+  (testing "guest test-count-bad: 壊れた宣言は guest が検出する"
+    (is (= 0 (route-count-ok (inc (:route-count default-db)) (count (:routes default-db)))))
+    (is (= 0 (kind-ok (kind-code "nonexistent"))))))

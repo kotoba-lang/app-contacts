@@ -1,0 +1,18 @@
+;; app-contacts — itonami（dapp）の aiueos アプリ記述子（notes.edn 形）。
+;; 判定コアは aiueos/contacts_surface.cljk（appview 面宣言の整合判定）。
+;; 正本は appview/contacts-mcp-component/cljs/src/contacts/app.cljk（default-db）。
+;; pure（:effects #{}）。
+{:aiueos/component :app/contacts-surface
+ :aiueos/kind :app
+ :aiueos/trust :untrusted
+ :aiueos/source "contacts_surface.cljk"
+ :aiueos/wasm "contacts_surface.wasm"
+ :aiueos/entry "main"
+ :aiueos/args []
+ :aiueos/imports #{}
+ :aiueos/exports #{:app/main
+                   :app/route-count-ok
+                   :app/kind-ok
+                   :app/surface-judgment}
+ :aiueos/effects #{}
+ :aiueos/limits {:memory-pages 16 :fuel 5000000}}
